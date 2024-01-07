@@ -1,4 +1,7 @@
+import { useEffect, useState } from "react"
 import styled from "styled-components"
+import  ServiceAPI from "../../service"
+import { IloginReturn } from "../../interfaces/interfaceLogin"
 
 const Container = styled.div`
   margin:0;
@@ -49,13 +52,21 @@ const Form = styled.form`
   }
 `
 export const Login = ()=>{
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    function login(){
+      event?.preventDefault();
+      ServiceAPI.login({email,password});
+    }
+
     return(
     <Container>
       <Form>
         <h1 id="title">Login: </h1>
-        <input type="email" name="email" id="" placeholder="E-mail"/>
-        <input type="password" name="password" id="" placeholder="Senha"/>
-        <input type="submit" value="Login" />
+        {email && email}
+        <input type="email" name="email" id="" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="E-mail" />
+        <input type="password" name="password" id="" value={password} onChange={(e)=> setPassword(e.target.value)}  placeholder="Senha"/>
+        <input type="submit" value="Login" onClick={login}/>
       </Form>
     </Container>
     )
