@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react"
+import { useContext,  useEffect,  useState } from "react"
 import styled from "styled-components"
-import  ServiceAPI from "../../service"
-import { IloginReturn } from "../../interfaces/interfaceLogin"
+import  ServiceAPI, { loginAPI } from "../../service"
+import { userContext } from "../../context/contextUser"
 
 const Container = styled.div`
   margin:0;
@@ -51,19 +51,29 @@ const Form = styled.form`
     font-family: "Arial"
   }
 `
+
 export const Login = ()=>{
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    function login(){
+    const [user, setUser] = useContext(userContext);
+    const [token, setToken] = useState("");
+    // todo corrigir bug salvamento de token
+
+    async function login(){
       event?.preventDefault();
-      ServiceAPI.login({email,password});
+      const response = await loginAPI(email,password);
+      if(response){
+        setToken(response.token)
+      }
     }
+    
 
     return(
     <Container>
       <Form>
         <h1 id="title">Login: </h1>
         {email && email}
+        {token && token}
         <input type="email" name="email" id="" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="E-mail" />
         <input type="password" name="password" id="" value={password} onChange={(e)=> setPassword(e.target.value)}  placeholder="Senha"/>
         <input type="submit" value="Login" onClick={login}/>
