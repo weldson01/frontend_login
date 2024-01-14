@@ -1,7 +1,8 @@
-import { useContext,  useEffect,  useState } from "react"
+import { useContext, useEffect,  useState } from "react"
 import styled from "styled-components"
-import  ServiceAPI, { loginAPI } from "../../service"
+import { loginAPI } from "../../service"
 import { userContext } from "../../context/contextUser"
+import { redirect } from "react-router-dom"
 
 const Container = styled.div`
   margin:0;
@@ -39,45 +40,58 @@ const Form = styled.form`
     outline:0;
     
   }
-  input[type="submit"]{
+  button{
+    width: 50%;
+    height: 3em;
+    font-size: 1.2rem;
+    font-size: 1.2rem;
+    border-radius: 1rem;
+    border: 0;
     background: linear-gradient(rgb(255,255,255),rgb(200,200,200));
   }
-  input[type="submit"]:hover{
+  button:hover{
       background: linear-gradient(rgb(200,200,200),rgb(255,255,255));
+      cursor:pointer;
   }
   #title{
-    align-self: flex-start;
-    margin-left: 2.5rem;
-    font-family: "Arial"
+    align-self: start;
+    margin-left: 2rem;
+    font-family: "Arial";
+    font-size: 1.5em;
+  }
+  label{
+    align-self: start;
+    margin-left: 2em;
   }
 `
 
 export const Login = ()=>{
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [user, setUser] = useContext(userContext);
-    const [token, setToken] = useState("");
-    // todo corrigir bug salvamento de token
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [user, setUser] = useContext(userContext);
+  
+  useEffect(()=>{
+    console.log(user)
+  },[user])
 
-    async function login(){
-      event?.preventDefault();
-      const response = await loginAPI(email,password);
-      if(response){
-        setToken(response.token)
-      }
-    }
-    
+  async function handleLogin(e:any){
+    e.preventDefault();
+    await loginAPI(email, password).then(response=>{
+      setUser(response)
+    })
+  }
 
-    return(
+  return(
     <Container>
-      <Form>
-        <h1 id="title">Login: </h1>
-        {email && email}
-        {token && token}
-        <input type="email" name="email" id="" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="E-mail" />
-        <input type="password" name="password" id="" value={password} onChange={(e)=> setPassword(e.target.value)}  placeholder="Senha"/>
-        <input type="submit" value="Login" onClick={login}/>
+      <Form onSubmit={handleLogin}>
+        {user && user?.id}
+        <h3 id="title">Login</h3>
+        <label htmlFor="email">Email: </label>
+        <input type="email" name="email" id="email" onChange={e=> setEmail(e.target.value)}/>
+        <label htmlFor="password">Password: </label>
+        <input type="password" name="password" id="password" onChange={e=> setPassword(e.target.value)}/>
+        <button>Login</button>
       </Form>
     </Container>
-    )
+  )
 }
